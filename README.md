@@ -5,11 +5,12 @@
 - 关键词搜索站点内容并生成 NFO
 - 批量选择本地视频，在视频同目录生成同名 NFO
 - 本地同名封面优先写入 NFO 的 `thumb`
-- 视频信息来源于[madouqu](https://madouqu.com/)
+- 视频信息及封面数据来源于[madouqu](https://madouqu.com/)
 
 说明：
 
 - 本项目只是为了方便国产视频在媒体库中的读取，nfo信息中不含剧情描述，只包含基本信息
+- 使用 GPT-5.3-Codex 进行 vibe coding
 ---
 
 ## 1. 功能说明
