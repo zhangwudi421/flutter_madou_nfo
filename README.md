@@ -1,54 +1,81 @@
-# Flutter Android 版 NFO 生成器
+# NFO工坊（Flutter）
 
-这个目录提供 Flutter 方案的核心代码：
+多平台 国产视频 NFO 信息生成工具，支持：
 
-- `lib/main.dart`：抓取 madouqu、解析详情、生成 NFO、保存本地
-- `pubspec.yaml`：依赖
-- `android/app/src/main/AndroidManifest.xml`：已加网络权限
+- 关键词搜索站点内容并生成 NFO
+- 批量选择本地视频，在视频同目录生成同名 NFO
+- 本地同名封面优先写入 NFO 的 `thumb`
+- 视频信息来源于[madouqu](https://madouqu.com/)
 
-## 1) 初始化工程（首次）
+说明：
 
-本环境没有安装 Flutter，所以我无法直接构建。你本机安装 Flutter 后，在此目录执行：
+- 本项目只是为了方便国产视频在媒体库中的读取，nfo信息中不含剧情描述，只包含基本信息
+---
 
-```bash
-cd /Users/zxt/Documents/New\ project/flutter_madou_nfo
-flutter create .
-```
+## 1. 功能说明
 
-然后把本目录中的这三个文件保留为当前版本（`flutter create` 若覆盖，请再替换回来）：
+### A. 搜索生成 NFO
 
-- `pubspec.yaml`
-- `lib/main.dart`
-- `android/app/src/main/AndroidManifest.xml`
+1. 输入关键词（如番号、标题、演员名）
+2. 点击 `搜索`
+3. 结果按“单页”显示，支持：
+   - `上一页`
+   - `加载下一页`
+4. 勾选当前页条目后点击 `下载所选`，批量生成 NFO
 
-## 2) 运行调试
+说明：
 
-```bash
-flutter pub get
-flutter run
-```
+- 翻页时始终只显示当前页内容（不会累加所有页）
+- 支持同名封面写入（可开关）
 
-## 3) 打包 APK
+### B. 批量本地视频生成同名 NFO
 
-```bash
-flutter build apk --release
-```
+1. 点击 `批量选择本地视频生成同名NFO`
+2. 一次可选多个视频文件
+3. 对每个视频：
+   - 在视频所在目录生成同名 `.nfo`
+   - 优先使用同目录同名图片作为封面
+   - 若无匹配详情则自动使用本地视频信息兜底生成
 
-产物路径：
+例如：
 
-`build/app/outputs/flutter-apk/app-release.apk`
+- `movie1.mp4` -> `movie1.nfo`
+- 若存在 `movie1.jpg/jpeg/png/webp`，NFO 的 `thumb` 写为该本地图片名
 
-## 4) 应用功能
+---
 
-- 输入视频名/番号（如 `MD-0382`）
-- 点击“生成 NFO”
-- 自动写入：
-  - app 专属外部目录：`.../Android/data/<包名>/files/nfo_output/`
-  - `.nfo` 文件（默认按番号命名）
-  - `poster.jpg`（可关闭）
+## 2. 输出规则
 
-## 5) 后续可扩展
+### 搜索模式
 
-- 加“手动选择搜索结果”列表
-- 批量导入文件名并批量生成
-- 支持自定义输出目录（SAF 文档树）
+- 默认输出目录：`/storage/emulated/0/Download/nfo_output`（Android）
+- 可手动改输出目录
+- 默认 NFO 名：`视频名称-演员名.nfo`
+
+### 本地视频模式
+
+- 输出目录：视频文件所在目录
+- NFO 名：与视频同名（仅后缀变为 `.nfo`）
+- 封面名：与视频同名（如需下载则 `.jpg`）
+
+---
+
+## 3. 权限说明（Android）
+
+为支持写入任意目录，应用使用外部存储相关权限。首次执行写入时若未授权，会提示前往系统设置授予权限。
+
+---
+
+## 4. 常见问题
+
+### Q1：为什么某些视频没有匹配到站点详情？
+
+A：会自动退回“本地信息兜底”模式，仍生成可用 NFO，不会中断批量任务。
+
+### Q2：为什么 NFO 里没有封面？
+
+A：本地同名图不存在且封面下载开关关闭时，`thumb` 会为空。
+
+### Q3：翻页后之前页的结果去哪了？
+
+A：当前设计为“单页显示”，避免结果过多导致等待过长。
